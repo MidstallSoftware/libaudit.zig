@@ -114,7 +114,7 @@ pub fn build(b: *std.Build) void {
         .HAVE_STDLIB_H = 1,
         .HAVE_STRINGS_H = 1,
         .HAVE_STRING_H = 1,
-        .HAVE_STRNDUPA = 1,
+        .HAVE_STRNDUPA = if (target.result.abi.isGnu()) true else null,
         .HAVE_STRUCT_AUDIT_STATUS_FEATURE_BITMAP = 1,
         .HAVE_SYS_EPOLL_H = 1,
         .HAVE_SYS_EVENTFD_H = 1,

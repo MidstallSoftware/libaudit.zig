@@ -106,7 +106,7 @@ pub fn build(b: *std.Build) void {
         .HAVE_PORT_H = 1,
         .HAVE_POSIX_FALLOCATE = 1,
         .HAVE_PTHREAD_YIELD = 1,
-        .HAVE_RAWMEMCHR = 1,
+        .HAVE_RAWMEMCHR = @as(?u8, if (target.result.abi.isGnu()) 1 else null),
         .HAVE_SELECT = 1,
         .HAVE_SIGNALFD = 1,
         .HAVE_STDINT_H = 1,
@@ -452,6 +452,8 @@ pub fn build(b: *std.Build) void {
         .s2i = false,
     }));
 
+    libauparse.addIncludePath(source.path("auparse"));
+
     libauparse.addCSourceFiles(.{
         .files = &.{
             source.path("auparse/auditd-config.c").getPath(source.builder),
@@ -459,7 +461,8 @@ pub fn build(b: *std.Build) void {
             source.path("auparse/data_buf.c").getPath(source.builder),
             source.path("auparse/ellist.c").getPath(source.builder),
             source.path("auparse/expression.c").getPath(source.builder),
-            source.path("auparse/interpret.c").getPath(source.builder),
+            // NOTE: https://github.com/linux-audit/audit-userspace/issues/358
+            b.pathFromRoot("auparse/interpret.c"),
             source.path("auparse/lru.c").getPath(source.builder),
             source.path("auparse/message.c").getPath(source.builder),
             source.path("auparse/normalize-llist.c").getPath(source.builder),

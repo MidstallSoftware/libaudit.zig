@@ -8,8 +8,8 @@
             .hash = "1220c5a736dd635e70e3132d5e87f8c7ec22626c4b98a6c00672c3d55448653a0993",
         },
         .@"libcap-ng" = .{
-            .url = "https://github.com/MidstallSoftware/libcap-ng.zig/archive/a754e5adc8ae4f0b8ec25a481dd07250d445ba57.tar.gz",
-            .hash = "1220e1dea1b8b34378a88c991166cd3941fc0f77bbc19fbbf8dbeb34c91d88ba39c8",
+            .url = "https://github.com/MidstallSoftware/libcap-ng.zig/archive/3b9b2a81d817bc2e579d10a8e61327bc5c322346.tar.gz",
+            .hash = "1220405f67f78da335345bbea315ab6bab96e0f23a4c63da11852a18929113613ff7",
         },
     },
 }

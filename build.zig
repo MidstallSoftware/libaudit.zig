@@ -27,8 +27,9 @@ fn genTables(b: *std.Build, configHeader: *std.Build.Step.ConfigHeader, options:
     genTablesExec.addIncludePath(source.path("lib"));
 
     genTablesExec.addCSourceFiles(.{
+        .root = source.path("lib"),
         .files = &.{
-            source.path("lib/gen_tables.c").getPath(source.builder),
+            "gen_tables.c",
         },
         .flags = &.{
             "-D_GNU_SOURCE",
@@ -61,7 +62,7 @@ fn genTables(b: *std.Build, configHeader: *std.Build.Step.ConfigHeader, options:
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const linkage = b.option(std.Build.Step.Compile.Linkage, "linkage", "whether to statically or dynamically link the library") orelse .static;
+    const linkage = b.option(std.builtin.LinkMode, "linkage", "whether to statically or dynamically link the library") orelse @as(std.builtin.LinkMode, if (target.result.isGnuLibC()) .dynamic else .static);
 
     const source = b.dependency("libaudit", .{});
 
@@ -161,10 +162,11 @@ pub fn build(b: *std.Build) void {
     common.addIncludePath(source.path("lib"));
 
     common.addCSourceFiles(.{
+        .root = source.path("common"),
         .files = &.{
-            source.path("common/audit-fgets.c").getPath(source.builder),
-            source.path("common/common.c").getPath(source.builder),
-            source.path("common/strsplit.c").getPath(source.builder),
+            "audit-fgets.c",
+            "common.c",
+            "strsplit.c",
         },
         .flags = &.{"-D_GNU_SOURCE"},
     });
@@ -312,13 +314,14 @@ pub fn build(b: *std.Build) void {
     }));
 
     libaudit.addCSourceFiles(.{
+        .root = source.path("lib"),
         .files = &.{
-            source.path("lib/libaudit.c").getPath(source.builder),
-            source.path("lib/message.c").getPath(source.builder),
-            source.path("lib/netlink.c").getPath(source.builder),
-            source.path("lib/lookup_table.c").getPath(source.builder),
-            source.path("lib/audit_logging.c").getPath(source.builder),
-            source.path("lib/deprecated.c").getPath(source.builder),
+            "libaudit.c",
+            "message.c",
+            "netlink.c",
+            "lookup_table.c",
+            "audit_logging.c",
+            "deprecated.c",
         },
         .flags = &.{"-D_GNU_SOURCE"},
     });
@@ -454,20 +457,27 @@ pub fn build(b: *std.Build) void {
 
     libauparse.addIncludePath(source.path("auparse"));
 
+    // NOTE: https://github.com/linux-audit/audit-userspace/issues/358
+    libauparse.addCSourceFile(.{
+        .file = .{
+            .path = "auparse/interpret.c",
+        },
+        .flags = &.{"-D_GNU_SOURCE"},
+    });
+
     libauparse.addCSourceFiles(.{
+        .root = source.path("auparse"),
         .files = &.{
-            source.path("auparse/auditd-config.c").getPath(source.builder),
-            source.path("auparse/auparse.c").getPath(source.builder),
-            source.path("auparse/data_buf.c").getPath(source.builder),
-            source.path("auparse/ellist.c").getPath(source.builder),
-            source.path("auparse/expression.c").getPath(source.builder),
-            // NOTE: https://github.com/linux-audit/audit-userspace/issues/358
-            b.pathFromRoot("auparse/interpret.c"),
-            source.path("auparse/lru.c").getPath(source.builder),
-            source.path("auparse/message.c").getPath(source.builder),
-            source.path("auparse/normalize-llist.c").getPath(source.builder),
-            source.path("auparse/normalize.c").getPath(source.builder),
-            source.path("auparse/nvlist.c").getPath(source.builder),
+            "auditd-config.c",
+            "auparse.c",
+            "data_buf.c",
+            "ellist.c",
+            "expression.c",
+            "lru.c",
+            "message.c",
+            "normalize-llist.c",
+            "normalize.c",
+            "nvlist.c",
         },
         .flags = &.{"-D_GNU_SOURCE"},
     });
